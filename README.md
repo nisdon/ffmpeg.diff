@@ -10,8 +10,8 @@ ffmpegにlibaribcaptionをリンクする[patch](https://patchwork.ffmpeg.org/pr
  - 上記ファイル以外、残りのpatch内にある差分を手動で適用します。
 
 ## 対応バージョン
-# ffmpeg-4.3.2-Matrix-19.2 (kodi v19.4用)
+ - ffmpeg-4.3.2-Matrix-19.2 (kodi v19.4用)
 
 ## 関連サイト
-[add ARIB caption decoder using libaribcaption](https://patchwork.ffmpeg.org/project/ffmpeg/list/?submitter=1420)
-[libaribcaption](https://github.com/xqq/libaribcaption)
+ - [add ARIB caption decoder using libaribcaption](https://patchwork.ffmpeg.org/project/ffmpeg/list/?submitter=1420)
+ - [libaribcaption](https://github.com/xqq/libaribcaption)
