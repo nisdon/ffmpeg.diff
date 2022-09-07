@@ -1,0 +1,57 @@
+*** d:/diff/libavformat/mpegts.c.orig	2021-06-13 00:35:46.000000000 +0900
+--- d:/diff/libavformat/mpegts.c	2022-08-19 17:40:32.841801300 +0900
+***************
+*** 2110,2115 ****
+--- 2110,2116 ----
+              // Vol. 3, Section 2, 4.2.8.1
+              int actual_component_tag = st->stream_identifier - 1;
+              int picked_profile = FF_PROFILE_UNKNOWN;
++             AVStream *v_st = NULL;
+              int data_component_id = get16(pp, desc_end);
+              if (data_component_id < 0)
+                  return AVERROR_INVALIDDATA;
+***************
+*** 2120,2126 ****
+--- 2121,2132 ----
+                  // non-mobile captioning service ("profile A").
+                  if (actual_component_tag >= 0x30 &&
+                      actual_component_tag <= 0x37) {
++                     int v_index;
+                      picked_profile = FF_PROFILE_ARIB_PROFILE_A;
++                     v_index = av_find_best_stream(fc, AVMEDIA_TYPE_VIDEO,
++                                                   -1, 1, NULL, 0);
++                     if (v_index >= 0)
++                         v_st = fc->streams[v_index];
+                  }
+                  break;
+              case 0x0012:
+***************
+*** 2139,2146 ****
+  
+              st->codecpar->codec_type = AVMEDIA_TYPE_SUBTITLE;
+              st->codecpar->codec_id   = AV_CODEC_ID_ARIB_CAPTION;
+!             st->codecpar->profile    = picked_profile;
+              st->request_probe        = 0;
+          }
+          break;
+      case 0xb0: /* DOVI video stream descriptor */
+--- 2145,2163 ----
+  
+              st->codecpar->codec_type = AVMEDIA_TYPE_SUBTITLE;
+              st->codecpar->codec_id   = AV_CODEC_ID_ARIB_CAPTION;
+!             if (st->codecpar->profile != picked_profile) {
+!                 st->codecpar->profile = picked_profile;
+!                 st->internal->need_context_update = 1;
+!             }
+!             if (v_st &&
+!                 (st->codecpar->width != v_st->codecpar->width ||
+!                  st->codecpar->height != v_st->codecpar->height)) {
+!                 st->codecpar->width = v_st->codecpar->width;
+!                 st->codecpar->height = v_st->codecpar->height;
+!                 st->internal->need_context_update = 1;
+!             }
+              st->request_probe        = 0;
++             st->need_parsing = 0;
+          }
+          break;
+      case 0xb0: /* DOVI video stream descriptor */

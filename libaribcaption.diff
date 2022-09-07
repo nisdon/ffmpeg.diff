@@ -1,0 +1,81 @@
+*** d:/diff/libavcodec/libaribcaption.c.orig	2022-09-04 21:15:37.983632500 +0900
+--- d:/diff/libavcodec/libaribcaption.c	2022-09-04 21:15:26.217539400 +0900
+***************
+*** 20,26 ****
+   */
+  
+  #include "avcodec.h"
+! #include "codec_internal.h"
+  #include "internal.h"
+  #include "libavcodec/ass.h"
+  #include "libavutil/avstring.h"
+--- 20,26 ----
+   */
+  
+  #include "avcodec.h"
+! //#include "codec_internal.h"
+  #include "internal.h"
+  #include "libavcodec/ass.h"
+  #include "libavutil/avstring.h"
+***************
+*** 892,897 ****
+--- 892,898 ----
+      }
+  
+      aribcc_caption_cleanup(&ctx->caption);
++     aribcc_render_result_cleanup(&ctx->render_result);
+      return avpkt->size;
+  }
+  
+***************
+*** 1082,1088 ****
+  }
+  
+  #if !defined(DEFAULT_SUBTITLE_TYPE)
+! # define DEFAULT_SUBTITLE_TYPE SUBTITLE_ASS
+  #endif
+  #if !defined(ASS_WORKAROUND)
+  # define ASS_WORKAROUND 1
+--- 1083,1089 ----
+  }
+  
+  #if !defined(DEFAULT_SUBTITLE_TYPE)
+! # define DEFAULT_SUBTITLE_TYPE SUBTITLE_BITMAP
+  #endif
+  #if !defined(ASS_WORKAROUND)
+  # define ASS_WORKAROUND 1
+***************
+*** 1128,1143 ****
+      .version    = LIBAVUTIL_VERSION_INT,
+  };
+  
+! const FFCodec ff_aribcaption_decoder = {
+!     .p.name      = "aribcaption",
+!     .p.long_name = NULL_IF_CONFIG_SMALL("ARIB STD-B24 caption decoder"),
+!     .p.type      = AVMEDIA_TYPE_SUBTITLE,
+!     .p.id        = AV_CODEC_ID_ARIB_CAPTION,
+      .priv_data_size = sizeof(ARIBCaptionContext),
+      .init      = aribcaption_init,
+      .close     = aribcaption_close,
+!     FF_CODEC_DECODE_SUB_CB(aribcaption_decode),
+      .flush     = aribcaption_flush,
+!     .p.priv_class= &aribcaption_class,
+      .caps_internal = FF_CODEC_CAP_INIT_THREADSAFE,
+  };
+--- 1129,1144 ----
+      .version    = LIBAVUTIL_VERSION_INT,
+  };
+  
+! const AVCodec ff_aribcaption_decoder = {
+!     .name      = "aribcaption",
+!     .long_name = NULL_IF_CONFIG_SMALL("ARIB STD-B24 caption decoder"),
+!     .type      = AVMEDIA_TYPE_SUBTITLE,
+!     .id        = AV_CODEC_ID_ARIB_CAPTION,
+      .priv_data_size = sizeof(ARIBCaptionContext),
+      .init      = aribcaption_init,
+      .close     = aribcaption_close,
+!     .decode    = aribcaption_decode,
+      .flush     = aribcaption_flush,
+!     .priv_class= &aribcaption_class,
+      .caps_internal = FF_CODEC_CAP_INIT_THREADSAFE,
+  };
